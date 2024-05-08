@@ -17,7 +17,7 @@ class User {
 
   addToCart(product){
     const cartProductIndex = this.cart.items.findIndex(cp => {
-      return cp.productId === product._id;
+      return cp.productId.toString() === product._id.toString();
     });
     let newQuantity = 1;
     const updatedCartItems = [...this.cart.items];
@@ -26,7 +26,7 @@ class User {
       newQuantity = this.cart.items[cartProductIndex].quantity + 1;
       updatedCartItems[cartProductIndex].quantity = newQuantity;
     } else {
-      updatedCartItems.push({productId: new ObjectId(product.id), quantity: newQuantity});
+      updatedCartItems.push({productId: new ObjectId(product._id), quantity: newQuantity});
     }
 
     const updatedCart = { items: updatedCartItems };
@@ -34,7 +34,7 @@ class User {
     const db = getDb();
     return db
     .collection('user')
-    .updateOne({_id: new Object(this._id)}, { $set: {cart: updatedCart} });
+    .updateOne({_id: new ObjectId(this._id)}, { $set: { cart: updatedCart } });
   }
 
   static fetchById(userId){
