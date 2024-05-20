@@ -4,6 +4,8 @@ const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const sendgridTransport = require("nodemailer-sendgrid-transport");
 
+const { validationResult } = require("express-validator");
+
 const User = require("../models/user");
 
 const transporter = nodemailer.createTransport(
@@ -52,7 +54,6 @@ exports.postLogin = (req, res, next) => {
         req.flash("error", "Invalid email or password.");
         return res.redirect("/login");
       }
-      console.log("111");
       return bcrypt
         .compare(password, user.password)
         .then((doMatch) => {
@@ -76,9 +77,20 @@ exports.postLogin = (req, res, next) => {
 };
 
 exports.postSignup = (req, res, next) => {
+  console.log("111");
   const email = req.body.email;
   const password = req.body.password;
   const confirmPassword = req.body.confirmPassword;
+  const errors = validationResult(req);
+  console.log("errors", errors);
+  if (!errors.isEmpty()) {
+    return res.status(422).render("auth/signup", {
+      path: "/signup",
+      pageTitle: "Signup",
+      errorMessage: errors.array()[0].msg,
+    });
+  }
+
   User.findOne({ email: email })
     .then((userDoc) => {
       if (userDoc) {
