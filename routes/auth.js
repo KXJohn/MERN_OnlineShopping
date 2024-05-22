@@ -23,11 +23,11 @@ router.post(
             return Promise.reject("Invalid email or password.");
           }
         });
-      }),
-    body(
-      "password",
-      "Please enter a password with more than 5 characters"
-    ).isLength({ min: 5 }),
+      })
+      .normalizeEmail(),
+    body("password", "Please enter a password with more than 5 characters")
+      .isLength({ min: 5 })
+      .trim(),
   ],
   authController.postLogin
 );
@@ -50,17 +50,19 @@ router.post(
             );
           }
         });
-      }),
-    body(
-      "password",
-      "Please enter a password with more than 5 characters"
-    ).isLength({ min: 5 }),
-    body("confirmPassword").custom((value, { req }) => {
-      if (value === req.body.passwod) {
-        return true;
-      }
-      throw new Error("Please confirm your password");
-    }),
+      })
+      .normalizeEmail(),
+    body("password", "Please enter a password with more than 5 characters")
+      .isLength({ min: 5 })
+      .trim(),
+    body("confirmPassword")
+      .custom((value, { req }) => {
+        if (value === req.body.passwod) {
+          return true;
+        }
+        throw new Error("Please confirm your password");
+      })
+      .trim(),
   ],
   authController.postSignup
 );
