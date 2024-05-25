@@ -13,8 +13,8 @@
         <form class="product-form" action="/admin/<% if (editing) { %>edit-product<% } else { %>add-product<% } %>" method="POST" enctype="multipart/form-data">
             <div class="form-control">
                 <label for="title">Title</label>
-                <input    
-                    class="<%= validationErrors.find(e => e.path === 'title') ? 'invalid' : '' %>"
+                <input 
+                    class="<%= validationErrors.find(e => e.param === 'title') ? 'invalid' : '' %>"
                     type="text" 
                     name="title" 
                     id="title" 
@@ -23,9 +23,9 @@
             <!-- <div class="form-control">
                 <label for="imageUrl">Image URL</label>
                 <input 
-                    class="<%= validationErrors.find(e => e.path === 'imageUrl') ? 'invalid' : '' %>"
+                    class="<%= validationErrors.find(e => e.param === 'imageUrl') ? 'invalid' : '' %>"
                     type="text" 
-                    name="imageUrl" ß
+                    name="imageUrl" 
                     id="imageUrl" 
                     value="<% if (editing || hasError) { %><%= product.imageUrl %><% } %>">
             </div> -->
@@ -34,12 +34,12 @@
                 <input 
                     type="file" 
                     name="image" 
-                    id="image">
+                    id="image" >
             </div>
             <div class="form-control">
                 <label for="price">Price</label>
                 <input 
-                    class="<%= validationErrors.find(e => e.path === 'price') ? 'invalid' : '' %>"
+                    class="<%= validationErrors.find(e => e.param === 'price') ? 'invalid' : '' %>"
                     type="number" 
                     name="price" 
                     id="price" 
@@ -49,7 +49,7 @@
             <div class="form-control">
                 <label for="description">Description</label>
                 <textarea 
-                    class="<%= validationErrors.find(e => e.path === 'description') ? 'invalid' : '' %>"
+                    class="<%= validationErrors.find(e => e.param === 'description') ? 'invalid' : '' %>"
                     name="description" 
                     id="description" 
                     rows="5"><% if (editing || hasError) { %><%= product.description %><% } %></textarea>
