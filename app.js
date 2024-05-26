@@ -68,12 +68,6 @@ app.use(csrfProtection);
 app.use(flash());
 
 app.use((req, res, next) => {
-  res.locals.isAuthenticated = req.session.isLoggedIn;
-  res.locals.csrfToken = req.csrfToken();
-  next();
-});
-
-app.use((req, res, next) => {
   if (!req.session.user) {
     return next();
   }
@@ -90,6 +84,15 @@ app.use((req, res, next) => {
     });
 });
 
+// middleware
+app.use((req, res, next) => {
+  // set local variables are pass into the views
+  // these only exist in the view that we are rendered
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
+
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
@@ -102,7 +105,7 @@ app.use((error, req, res, next) => {
   res.status(500).render("500", {
     pageTitle: "Error",
     path: "/500",
-    isAuthenticated: true,
+    isAuthenticated: req.session.isLoggedIn,
     csrfToken: "",
   });
 });

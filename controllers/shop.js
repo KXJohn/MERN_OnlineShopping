@@ -6,15 +6,37 @@ const PDFDoc = require("pdfkit");
 const Product = require("../models/product");
 const Order = require("../models/order");
 
+const ITEMS_PER_PAGE = 2;
+
 exports.getProducts = (req, res, next) => {
+  const page = +req.query.page || 1;
+  let totalItems = 0;
+
   Product.find()
+    .countDocuments()
+    .then((num) => {
+      totalItems = num;
+      return (
+        Product.find()
+          // skip first x amount of results
+          .skip((page - 1) * ITEMS_PER_PAGE)
+          // skip items and then fetch the number of items we want to fetch
+          // limit the itmes we want to fetch from the datebase
+          .limit(ITEMS_PER_PAGE)
+      );
+    })
     .then((products) => {
-      console.log(products);
       res.render("shop/product-list", {
         prods: products,
         pageTitle: "All Products",
         path: "/products",
-        isAuthenticated: req.session.user,
+        isAuthenticated: req.session.isLoggedIn,
+        currentPage: page,
+        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
       });
     })
     .catch((err) => {
@@ -32,7 +54,7 @@ exports.getProduct = (req, res, next) => {
         product: product,
         pageTitle: product.title,
         path: "/products",
-        isAuthenticated: req.session.user,
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {
@@ -43,12 +65,33 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
+  const page = +req.query.page || 1;
+  let totalItems = 0;
+
   Product.find()
+    .countDocuments()
+    .then((num) => {
+      totalItems = num;
+      return (
+        Product.find()
+          // skip first x amount of results
+          .skip((page - 1) * ITEMS_PER_PAGE)
+          // skip items and then fetch the number of items we want to fetch
+          // limit the itmes we want to fetch from the datebase
+          .limit(ITEMS_PER_PAGE)
+      );
+    })
     .then((products) => {
       res.render("shop/index", {
         prods: products,
         pageTitle: "Shop",
         path: "/",
+        currentPage: page,
+        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
       });
     })
     .catch((err) => {
@@ -67,7 +110,7 @@ exports.getCart = (req, res, next) => {
         path: "/cart",
         pageTitle: "Your Cart",
         products: products,
-        isAuthenticated: req.session.user,
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {
@@ -139,7 +182,7 @@ exports.getOrders = (req, res, next) => {
         path: "/orders",
         pageTitle: "Your Orders",
         orders: orders,
-        isAuthenticated: req.session.user,
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {
