@@ -65,6 +65,7 @@ app.use(
   })
 );
 app.use(csrfProtection);
+Í;
 app.use(flash());
 
 app.use((req, res, next) => {

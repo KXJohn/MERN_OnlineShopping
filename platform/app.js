@@ -3,17 +3,43 @@ const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const multer = require("multer");
 
 const feedRouters = require("./routers/feed");
+const authRouters = require("./routers/auth");
 
 const app = express();
 
 const MONGODB_URI =
   "mongodb+srv://kaixiang82:Kaixiang82@cluster0.i7jg1ce.mongodb.net/message";
 
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "images");
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().toISOString() + "-" + file.originalname);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg" ||
+    file.mimetype === "image/webp"
+  ) {
+    cb(null, true);
+  }
+  cb(null, false);
+};
+
 // app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
 app.use(bodyParser.json()); // application/json
 app.use("/images", express.static(path.join(__dirname, "images")));
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
+);
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -26,6 +52,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/feed", feedRouters);
+app.use("/auth", authRouters);
 
 app.use((error, req, res, next) => {
   const status = error.statusCode || 500;
