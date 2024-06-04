@@ -36,10 +36,10 @@ const fileFilter = (req, file, cb) => {
 
 // app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
 app.use(bodyParser.json()); // application/json
-app.use("/images", express.static(path.join(__dirname, "images")));
 app.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
 );
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -57,8 +57,8 @@ app.use("/auth", authRouters);
 app.use((error, req, res, next) => {
   const status = error.statusCode || 500;
   const message = error.message;
-
-  res.status(status).json({ message: message });
+  const data = error.data;
+  res.status(status).json({ message: message, data: data });
 });
 
 mongoose
