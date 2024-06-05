@@ -7,6 +7,7 @@ const multer = require("multer");
 
 const feedRouters = require("./routers/feed");
 const authRouters = require("./routers/auth");
+const statusRouters = require("./routers/status");
 
 const app = express();
 
@@ -37,7 +38,7 @@ const fileFilter = (req, file, cb) => {
 // app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
 app.use(bodyParser.json()); // application/json
 app.use(
-  multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single("image"),
 );
 app.use("/images", express.static(path.join(__dirname, "images")));
 
@@ -45,7 +46,7 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Methods",
-    "GET, POST, PUT, PATCH, DELETE"
+    "GET, POST, PUT, PATCH, DELETE",
   );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
@@ -53,6 +54,7 @@ app.use((req, res, next) => {
 
 app.use("/feed", feedRouters);
 app.use("/auth", authRouters);
+app.use("/status", statusRouters);
 
 app.use((error, req, res, next) => {
   const status = error.statusCode || 500;
