@@ -10,6 +10,11 @@ const router = express.Router();
 
 router.get("/getStatus", isAuth, statusController.getStatus);
 
-router.patch("/updateStatus", isAuth, statusController.updateStatus);
+router.patch(
+  "/updateStatus",
+  isAuth,
+  [body("status").trim().notEmpty()],
+  statusController.updateStatus,
+);
 
 module.exports = router;
