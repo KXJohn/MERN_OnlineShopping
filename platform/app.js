@@ -65,5 +65,16 @@ app.use((error, req, res, next) => {
 
 mongoose
   .connect(MONGODB_URI)
-  .then(() => app.listen(8080))
+  .then(() => {
+    const server = app.listen(8080);
+    // set up socket io channel
+    const io = require("./socket").init(server, {
+      cors: {
+        origin: "*",
+      },
+    });
+    io.on("connection", (socket) => {
+      console.log("Client connected");
+    });
+  })
   .catch((err) => console.log(err));
