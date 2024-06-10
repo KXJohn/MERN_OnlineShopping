@@ -68,11 +68,7 @@ mongoose
   .then(() => {
     const server = app.listen(8080);
     // set up socket io channel
-    const io = require("./socket").init(server, {
-      cors: {
-        origin: "*",
-      },
-    });
+    const io = require("./socket").init(server);
     io.on("connection", (socket) => {
       console.log("Client connected");
     });
