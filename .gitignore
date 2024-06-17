@@ -6,3 +6,4 @@ package-lock.json
 .DS_Store
 /platform/images
 /react-fe/node_modules
+/graphQLPlatform/node_modules
