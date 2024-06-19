@@ -8,11 +8,13 @@ const { graphqlHTTP } = require('express-graphql');
 
 const graphqlSchema = require('./graphql/schema');
 const graphqlResolver = require('./graphql/resolvers');
+const cors = require('cors');
 
 const MONGODB_URI =
   "mongodb+srv://kaixiang82:Kaixiang82@cluster0.i7jg1ce.mongodb.net/message";
 
 const app = express();
+app.use(cors());
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
