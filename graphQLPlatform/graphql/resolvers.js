@@ -9,7 +9,7 @@ module.exports = {
   createUser: async function({ userInput }, req) {
     //   const email = args.userInput.email;
     const errors = [];
-    if (!validator.isEmail(userInput.email)) {
+    if (!validator.isEmail(userInput.email)) { 
       errors.push({ message: 'E-Mail is invalid.' });
     }
     if (
@@ -62,6 +62,11 @@ module.exports = {
   },
 
   createPost: async function({postInput}, req ) {
+    if(!req.isAuth){
+      const error = new Error('Not Authenticated');
+      error.code = 401;
+      throw error;
+    }
     const errors = [];
     if(validator.isEmpty(postInput.title) || !validator.isLength(postInput.title, {min: 5})){
       errors.push({message: 'Title is invalid'});
@@ -78,12 +83,22 @@ module.exports = {
       throw error;
     }
 
+    const user = await User.findById(req.userId);
+
+    if(!user){
+      const error = new Error('Invalid User');
+      error.code = 401;
+      throw error;
+    }
+
     const post = new Post({
       title: postInput.title,
       content: postInput.content,
       imageUrl: postInput.imageUrl,
+      creator: user,
     });
     const createdPost = await post.save();
+    user.posts.push(createdPost);
     
     return {...createdPost._doc, _id: createdPost._id.toString(), createdAt: createdPost.createdAt.toISOString(), updatedAt: createdPost.updatedAt.toISOString() };
   }
