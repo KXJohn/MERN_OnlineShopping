@@ -122,9 +122,10 @@ app.use((error, req, res, next) => {
 mongoose
   .connect(MONGODB_URI, { useNewUrlParser: true })
   .then((result) => {
-    https
-      .createServer({ key: privateKey, cert: certificate }, app)
-      .listen(process.env.PORT || 8080);
+    // https
+    // .createServer({ key: privateKey, cert: certificate }, app)
+    // .listen(process.env.PORT || 8080);
+    app.listen(process.env.PORT || 8080);
   })
   .catch((err) => console.log(err));
 
