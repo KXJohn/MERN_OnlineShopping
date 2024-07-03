@@ -11,12 +11,14 @@ const graphqlSchema = require('./graphql/schema');
 const graphqlResolver = require('./graphql/resolvers');
 const cors = require('cors');
 const auth = require('./middleware/auth');
+const helmet = require('helmet');
 
 // kaixiang82
 // Kaixiang82
 const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.i7jg1ce.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`;
 
 const app = express();
+
 app.use(cors());
 
 const fileStorage = multer.diskStorage({
@@ -39,6 +41,8 @@ const fileFilter = (req, file, cb) => {
     cb(null, false);
   }
 };
+
+app.use(helmet());
 
 // app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
 app.use(bodyParser.json()); // application/json
