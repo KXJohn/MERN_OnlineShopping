@@ -12,8 +12,9 @@ const graphqlResolver = require('./graphql/resolvers');
 const cors = require('cors');
 const auth = require('./middleware/auth');
 
-const MONGODB_URI =
-  'mongodb+srv://kaixiang82:Kaixiang82@cluster0.i7jg1ce.mongodb.net/message';
+// kaixiang82
+// Kaixiang82
+const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.i7jg1ce.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`;
 
 const app = express();
 app.use(cors());
@@ -104,7 +105,7 @@ app.use((error, req, res, next) => {
 mongoose
   .connect(MONGODB_URI, { useNewUrlParser: true })
   .then((result) => {
-    app.listen(8080);
+    app.listen(process.env.PORT || 8080);
   })
   .catch((err) => console.log(err));
 
