@@ -12,6 +12,7 @@ const graphqlResolver = require('./graphql/resolvers');
 const cors = require('cors');
 const auth = require('./middleware/auth');
 const helmet = require('helmet');
+const compression = require('compression');
 
 // kaixiang82
 // Kaixiang82
@@ -43,6 +44,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 app.use(helmet());
+app.use(compression());
 
 // app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
 app.use(bodyParser.json()); // application/json
