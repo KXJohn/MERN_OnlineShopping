@@ -13,6 +13,8 @@ const cors = require('cors');
 const auth = require('./middleware/auth');
 const helmet = require('helmet');
 const compression = require('compression');
+const morgan = require('morgan');
+const https = require('https');
 
 // kaixiang82
 // Kaixiang82
@@ -21,6 +23,9 @@ const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO
 const app = express();
 
 app.use(cors());
+
+const privateKey = fs.readFileSync('server.key');
+const certificate = fs.readFileSync('server.cert');
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -43,8 +48,14 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, 'access.log'),
+  { flags: 'a' }
+);
+
 app.use(helmet());
 app.use(compression());
+app.use(morgan('combined', { stream: accessLogStream }));
 
 // app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
 app.use(bodyParser.json()); // application/json
@@ -111,7 +122,9 @@ app.use((error, req, res, next) => {
 mongoose
   .connect(MONGODB_URI, { useNewUrlParser: true })
   .then((result) => {
-    app.listen(process.env.PORT || 8080);
+    https
+      .createServer({ key: privateKey, cert: certificate }, app)
+      .listen(process.env.PORT || 8080);
   })
   .catch((err) => console.log(err));
 
